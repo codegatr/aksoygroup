@@ -135,9 +135,33 @@ class Updater
     {
         $tok = preg_replace('/[^a-zA-Z0-9_\-]/', '', trim($tok));
         if (!$tok) return false;
-        $ok = (bool)@file_put_contents(self::TOKEN_FILE, $tok);
-        @chmod(self::TOKEN_FILE, 0600);
-        return $ok;
+
+        $savedFile = false;
+        $savedDb = false;
+
+        // 1) Dosyaya yazmayı dene (.gh_token)
+        $tokenDir = dirname(self::TOKEN_FILE);
+        if (is_writable($tokenDir) || is_writable(self::TOKEN_FILE)) {
+            if (@file_put_contents(self::TOKEN_FILE, $tok) !== false) {
+                @chmod(self::TOKEN_FILE, 0600);
+                $savedFile = true;
+            }
+        }
+
+        // 2) DB'ye fallback (her durumda yaz — okurken file öncelikli)
+        try {
+            DB::exec(
+                "INSERT INTO ag_settings (setting_key, setting_value, setting_group, setting_type, label, sort_order, is_public)
+                 VALUES ('github_token', ?, 'sistem', 'text', 'GitHub Token', 20, 0)
+                 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
+                [$tok]
+            );
+            $savedDb = true;
+        } catch (Throwable $e) {
+            error_log('[Updater::saveToken] DB hatası: ' . $e->getMessage());
+        }
+
+        return $savedFile || $savedDb;
     }
 
     public function ghAPI(string $path): ?array

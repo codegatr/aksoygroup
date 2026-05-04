@@ -340,7 +340,7 @@ $csrfToken = CSRF::token();
                     <label>Token <?php if ($tokenSet): ?><span class="badge success" style="margin-left:8px">Tanımlı</span><?php endif; ?></label>
                     <div style="display:flex;gap:10px">
                         <input type="password" id="upd-token" placeholder="<?= $tokenSet ? '••••••••••' : 'ghp_… veya github_pat_…' ?>" autocomplete="off" style="flex:1">
-                        <button class="btn navy" onclick="updSaveToken()"><?= icon('shield', 14) ?> Kaydet</button>
+                        <button class="btn navy" onclick="updSaveToken(event)"><?= icon('shield', 14) ?> Kaydet</button>
                     </div>
                 </div>
             </div>
@@ -707,13 +707,36 @@ async function updRollback(name) {
 }
 
 // ── TOKEN ────────────────────────────────────────
-async function updSaveToken() {
+async function updSaveToken(event) {
     const tok = $u('upd-token').value.trim();
+    const btn = event ? event.target.closest('button') : null;
     if (!tok) { updToast('Token boş olamaz', 'error'); return; }
-    const fd = new FormData(); fd.append('token', tok);
-    const d = await updFetch('save_token', { method: 'POST', body: fd });
-    if (d.ok) { updToast('Token kaydedildi', 'success'); setTimeout(() => location.reload(), 1000); }
-    else updToast(d.error, 'error');
+    if (!/^(ghp_|github_pat_|gho_)[A-Za-z0-9_]{20,}$/.test(tok)) {
+        updToast('Token formatı geçersiz: ghp_… veya github_pat_… ile başlamalı', 'error');
+        return;
+    }
+    if (btn) { btn.disabled = true; btn.dataset.orig = btn.innerHTML; btn.innerHTML = '⏳ Kaydediliyor…'; }
+    const fd = new FormData();
+    fd.append('token', tok);
+    try {
+        const d = await updFetch('save_token', { method: 'POST', body: fd });
+        console.log('[token save]', d);
+        if (d.ok) {
+            if (btn) btn.innerHTML = '✓ Kaydedildi';
+            updToast('Token kaydedildi (' + (d.storage || 'ok') + ', son 4: …' + (d.token_tail || '????') + ')', 'success');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.orig; }
+            updToast(d.error || 'Bilinmeyen hata', 'error');
+            console.error('[token save] başarısız:', d);
+            alert('Token KAYDEDİLEMEDİ\n\nSebep: ' + (d.error || 'bilinmiyor') + '\n\nKonsoldaki ayrıntılara bakın (F12).');
+        }
+    } catch (e) {
+        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.orig; }
+        console.error('[token save] hata:', e);
+        updToast(e.message, 'error');
+        alert('AĞ HATASI\n\n' + e.message + '\n\nF12 → Network sekmesinden api/update.php?action=save_token isteğine bakın.');
+    }
 }
 
 // ── ZIP UPLOAD ───────────────────────────────────

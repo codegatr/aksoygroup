@@ -154,9 +154,29 @@ try {
         case 'save_token': {
             $tok = trim($_POST['token'] ?? '');
             if (!$tok) jsonResponse(['ok' => false, 'error' => 'Token boş olamaz.']);
+            if (!preg_match('/^(ghp_|github_pat_|gho_)[A-Za-z0-9_]{20,}$/', $tok)) {
+                jsonResponse(['ok' => false, 'error' => 'Token formatı geçersiz. ghp_… veya github_pat_… ile başlamalı.']);
+            }
             $ok = $updater->saveToken($tok);
-            if ($ok) Audit::log('update_token_set', 'system');
-            jsonResponse(['ok' => $ok, 'error' => $ok ? null : 'Token kaydedilemedi.']);
+            if (!$ok) {
+                $diag = [
+                    'token_dir_writable'  => is_writable(dirname(Updater::TOKEN_FILE)),
+                    'token_file_writable' => file_exists(Updater::TOKEN_FILE) ? is_writable(Updater::TOKEN_FILE) : 'yok',
+                    'token_file_path'     => Updater::TOKEN_FILE,
+                ];
+                jsonResponse([
+                    'ok'    => false,
+                    'error' => 'Token kaydedilemedi (ne dosyaya ne DB\'ye). Diagnostik: ' . json_encode($diag),
+                ]);
+            }
+            Audit::log('update_token_set', 'system');
+            // Yeni token'ı doğrula
+            $stored = $updater->token();
+            jsonResponse([
+                'ok'         => true,
+                'storage'    => is_writable(dirname(Updater::TOKEN_FILE)) || file_exists(Updater::TOKEN_FILE) ? 'file' : 'db',
+                'token_tail' => substr($stored, -4),
+            ]);
         }
 
         // ───────────────────────────────────────────
