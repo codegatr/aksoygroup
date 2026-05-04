@@ -2,8 +2,8 @@
   "name": "AKSOY GROUP",
   "slug": "aksoygroup",
   "domain": "aksoy.web.tr",
-  "version": "1.0.6",
-  "release_name": "Repo + CSRF Hotfix",
+  "version": "1.0.7",
+  "release_name": "Light Editorial Theme",
   "release_date": "2026-05-04",
   "php_required": "8.3.0",
   "mysql_required": "10.6.0",
@@ -18,7 +18,7 @@
   "modules": {
     "core": "1.0.0",
     "admin": "1.0.0",
-    "frontend": "1.0.0",
+    "frontend": "2.0.0",
     "updater": "3.0.0"
   },
   "description": "Aksoy Group — Hizmetler Topluluğu Platformu"

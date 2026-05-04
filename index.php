@@ -85,7 +85,7 @@ require_once __DIR__ . '/includes/templates/header.php';
 
 <!-- ════════ İŞTİRAKLER VİTRİNİ ════════ -->
 <?php if ($featuredCompanies): ?>
-<section class="section" style="background:var(--bg-2)">
+<section class="section alt">
     <div class="container">
         <div class="section-head">
             <span class="pretitle">İştiraklerimiz</span>
@@ -162,7 +162,7 @@ require_once __DIR__ . '/includes/templates/header.php';
 
 <!-- ════════ ZAMAN ÇİZGİSİ ════════ -->
 <?php if ($zaman): ?>
-<section class="section" style="background:var(--bg-2)">
+<section class="section alt">
     <div class="container">
         <div class="section-head">
             <span class="pretitle">Tarihçe</span>
@@ -183,15 +183,17 @@ require_once __DIR__ . '/includes/templates/header.php';
 <?php endif; ?>
 
 <!-- ════════ İLETİŞİM CTA ════════ -->
-<section class="section" style="background:linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);text-align:center">
+<section class="section dark" style="text-align:center">
     <div class="container">
-        <span class="pretitle" style="color:var(--gold);font-size:11px;letter-spacing:.3em;text-transform:uppercase">Birlikte Üretelim</span>
-        <h2 class="serif" style="font-weight:200;font-size:clamp(40px,6vw,72px);line-height:1.1;margin:24px auto;max-width:720px">
-            Yatırım, ortaklık ya da işbirliği — <em style="color:var(--gold);font-style:italic">konuşalım</em>.
-        </h2>
-        <p style="color:var(--text-soft);max-width:560px;margin:0 auto 40px;font-size:17px;line-height:1.7">
-            On sektörde geleceği şekillendiren bir hizmetler topluluğunun parçası olun.
-        </p>
+        <div class="section-head">
+            <span class="pretitle">Birlikte Üretelim</span>
+            <h2>
+                Yatırım, ortaklık ya da işbirliği — <em>konuşalım</em>.
+            </h2>
+            <p class="lead">
+                On sektörde geleceği şekillendiren bir hizmetler topluluğunun parçası olun.
+            </p>
+        </div>
         <a href="/iletisim" class="btn primary">İletişime Geç</a>
     </div>
 </section>
