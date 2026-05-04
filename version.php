@@ -1,3 +1,3 @@
 <?php
 declare(strict_types=1);
-define('AG_VERSION_INSTALLED', '1.0.10');
+define('AG_VERSION_INSTALLED', '1.0.11');

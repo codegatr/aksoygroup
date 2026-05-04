@@ -58,37 +58,40 @@ $megaSektorler = DB::all("SELECT slug, ad, alt_baslik FROM ag_sektorler
         <nav class="site-nav" id="siteNav">
             <a href="/">Ana Sayfa</a>
 
-            <!-- Kurumsal Megamenu -->
+            <!-- Kurumsal Dropdown — anchor'lar -->
             <div class="nav-dropdown" data-mega="kurumsal">
                 <button class="nav-dropdown-trigger" type="button">
                     Kurumsal
                     <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:5px"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div class="nav-dropdown-menu">
-                    <?php foreach ($kurumsalPages as $kp): ?>
-                        <a href="/<?= ha($kp['slug']) ?>"><?= h($kp['baslik']) ?></a>
-                    <?php endforeach; ?>
-                    <a href="/yonetim-kurulu">Yönetim Kurulu</a>
+                    <a href="/#hakkimizda">Hakkımızda</a>
+                    <a href="/#vizyon-misyon">Vizyon &amp; Değerler</a>
+                    <a href="/#yonetim-kurulu">Yönetim Kurulu</a>
+                    <a href="/#tarihce">Tarihçe</a>
+                    <a href="/#surdurulebilirlik">Sürdürülebilirlik</a>
                 </div>
             </div>
 
-            <!-- Faaliyet Alanları Megamenu (Sektörler) -->
+            <!-- Faaliyet Alanları -->
             <div class="nav-dropdown" data-mega="faaliyet">
                 <button class="nav-dropdown-trigger" type="button">
                     Faaliyet Alanları
                     <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:5px"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
                 <div class="nav-dropdown-menu" style="min-width:280px">
-                    <?php foreach (array_slice($megaSektorler, 0, 6) as $ms): ?>
+                    <a href="/#sektorler">Tüm Sektörler</a>
+                    <?php foreach (array_slice($megaSektorler, 0, 5) as $ms): ?>
                         <a href="/sektor/<?= ha($ms['slug']) ?>"><?= h($ms['ad']) ?></a>
                     <?php endforeach; ?>
-                    <a href="/sektorler" style="border-top:1px solid var(--line);margin-top:8px;color:var(--burgundy);font-weight:600">Tüm Sektörler →</a>
+                    <a href="/sektorler" style="border-top:1px solid var(--line);margin-top:8px;color:var(--burgundy);font-weight:600">Detaylı sayfa →</a>
                 </div>
             </div>
 
-            <a href="/sirketler">İştirakler</a>
-            <a href="/haberler">Haberler</a>
-            <a href="/iletisim" class="cta">İletişim</a>
+            <a href="/#istirakler">İştirakler</a>
+            <a href="/#haberler">Haberler</a>
+            <a href="/#kariyer">Kariyer</a>
+            <a href="/#iletisim" class="cta">İletişim</a>
 
             <!-- Search + Language toggle -->
             <div class="header-utils">
