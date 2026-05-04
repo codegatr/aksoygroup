@@ -494,91 +494,129 @@ img { max-width: 100%; display: block; }
 .fade-up.delay-3 { animation-delay: .3s; opacity: 0; }
 
 /* ════════════════════════════════════════════════════
-   HERO SLIDER (Alarko-grade, daha güçlü)
+   HERO SLIDER (Göltaş tarzı sade — büyük foto + kısa slogan)
    ═══════════════════════════════════════════════════ */
 .hero-slider {
-    position: relative; height: 100vh; min-height: 680px; max-height: 900px;
+    position: relative; height: 100vh; min-height: 640px; max-height: 880px;
     overflow: hidden; background: var(--bg-darker);
 }
 .hero-slide {
     position: absolute; inset: 0;
     opacity: 0; transition: opacity 1.2s ease-in-out;
-    display: flex; align-items: flex-end;
-    padding: 0 0 12vh; color: white;
+    display: flex; align-items: center; justify-content: center;
+    color: white; text-align: center;
 }
 .hero-slide.active { opacity: 1; z-index: 2; }
 .hero-slide-bg {
     position: absolute; inset: 0; z-index: 0;
     background-size: cover; background-position: center; background-repeat: no-repeat;
-    transform: scale(1.05); transition: transform 8s ease;
+    transform: scale(1.06); transition: transform 9s ease;
 }
-.hero-slide.active .hero-slide-bg { transform: scale(1); } /* Ken Burns yavaş zoom */
+.hero-slide.active .hero-slide-bg { transform: scale(1); } /* Ken Burns zoom */
 .hero-slide::after {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(180deg,
-        rgba(8,23,46,.40) 0%,
-        rgba(8,23,46,.65) 60%,
-        rgba(8,23,46,.85) 100%);
+        rgba(8,23,46,.35) 0%,
+        rgba(8,23,46,.55) 60%,
+        rgba(8,23,46,.78) 100%);
 }
-.hero-slide .container { position: relative; z-index: 3; max-width: 1280px; }
-.hero-slide .pretitle {
-    font-size: 11px; letter-spacing: .35em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 20px; font-weight: 600;
-    display: inline-flex; align-items: center; gap: 14px;
-}
-.hero-slide .pretitle::before { content: ''; width: 36px; height: 2px; background: var(--gold); }
+.hero-slide .container { position: relative; z-index: 3; max-width: 1100px; }
+
+/* Göltaş tarzı: tek satır kısa slogan, lead paragraph yok */
 .hero-slide h1 {
     font-family: 'Fraunces', serif; font-weight: 300;
-    font-size: clamp(40px, 6vw, 78px); line-height: 1.05; letter-spacing: -0.015em;
-    margin-bottom: 24px; max-width: 920px;
-    text-shadow: 0 2px 24px rgba(0,0,0,.3);
+    font-size: clamp(30px, 4.2vw, 56px);
+    line-height: 1.15; letter-spacing: -.005em;
+    margin: 0 auto;
+    text-shadow: 0 2px 24px rgba(0,0,0,.4);
+    max-width: 920px;
 }
 .hero-slide h1 em {
     font-style: italic; font-weight: 400; color: var(--gold);
 }
-.hero-slide .lead {
-    font-size: 17px; line-height: 1.7; color: rgba(255,255,255,.9);
-    max-width: 580px; margin-bottom: 36px;
-}
-.hero-slide .btn.primary { background: var(--gold); color: var(--navy); border-color: var(--gold); }
-.hero-slide .btn.primary:hover { background: white; border-color: white; }
-.hero-slide .btn.outline { border-color: rgba(255,255,255,.5); color: white; }
-.hero-slide .btn.outline:hover { background: white; color: var(--navy); border-color: white; }
 
-/* Slider kontrolleri */
-.hero-controls {
-    position: absolute; bottom: 36px; right: 32px; z-index: 10;
-    display: flex; gap: 10px; align-items: center;
+/* Sağ alt rozet — Göltaş'taki "Ülkemizde Bir İlk" gibi */
+.hero-badge {
+    position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+    z-index: 4;
+    border: 1px solid rgba(184,151,93,.6); background: rgba(8,23,46,.4);
+    backdrop-filter: blur(4px);
+    padding: 14px 22px;
+    font-size: 11px; letter-spacing: .25em; text-transform: uppercase; font-weight: 600;
+    color: var(--gold);
+    writing-mode: vertical-rl; transform-origin: center;
+    max-height: 60vh;
 }
-.hero-dots { display: flex; gap: 8px; }
-.hero-dot {
-    width: 32px; height: 2px; background: rgba(255,255,255,.3); cursor: pointer;
-    border: 0; padding: 0; transition: background .25s;
+@media (max-width: 900px) {
+    .hero-badge { right: 16px; padding: 10px 14px; font-size: 10px; letter-spacing: .15em; }
 }
-.hero-dot.active { background: var(--gold); height: 3px; }
-.hero-arrows { display: flex; gap: 8px; margin-left: 16px; }
-.hero-arrow {
-    width: 44px; height: 44px; background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.25); cursor: pointer;
-    color: white; display: flex; align-items: center; justify-content: center;
-    transition: all .2s;
-}
-.hero-arrow:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
 
-/* Slide indicator (sol-alt: "01 / 05") */
-.hero-indicator {
-    position: absolute; bottom: 36px; left: 32px; z-index: 10;
-    font-family: 'Fraunces', serif; color: white; font-size: 14px; letter-spacing: .1em;
+/* Sayılı pagination — alt orta */
+.hero-paging {
+    position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+    z-index: 10; display: flex; gap: 0; align-items: center;
+    border-top: 1px solid rgba(255,255,255,.15);
+    padding-top: 16px;
 }
-.hero-indicator .num { color: var(--gold); font-size: 28px; font-weight: 300; line-height: 1; }
-.hero-indicator .total { color: rgba(255,255,255,.5); margin-left: 12px; }
+.hero-num {
+    background: none; border: 0; color: rgba(255,255,255,.4);
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 17px;
+    padding: 12px 22px; cursor: pointer; transition: all .2s;
+    letter-spacing: .05em; position: relative;
+}
+.hero-num:hover { color: rgba(255,255,255,.8); }
+.hero-num.active { color: var(--gold); font-size: 24px; }
+.hero-num.active::before {
+    content: ''; position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    width: 32px; height: 2px; background: var(--gold);
+}
+@media (max-width: 600px) {
+    .hero-paging { bottom: 32px; }
+    .hero-num { padding: 10px 14px; font-size: 14px; }
+    .hero-num.active { font-size: 20px; }
+}
 
-@media (max-width: 768px) {
-    .hero-slider { height: 88vh; min-height: 580px; }
-    .hero-controls { bottom: 24px; right: 20px; }
-    .hero-indicator { left: 20px; bottom: 24px; }
-    .hero-arrow { width: 38px; height: 38px; }
+/* Hero arrows — kenarda, yarı saydam */
+.hero-arrows-side {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 10; display: flex; gap: 0;
+    width: 100%; justify-content: space-between; padding: 0 24px;
+    pointer-events: none;
 }
+.hero-arrow-btn {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15);
+    color: white; cursor: pointer; pointer-events: auto;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s; backdrop-filter: blur(4px);
+}
+.hero-arrow-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+@media (max-width: 600px) { .hero-arrow-btn { width: 40px; height: 40px; } }
+
+/* Slogan altı: küçük tek-buton CTA (opsiyonel) */
+.hero-slide .hero-cta {
+    margin-top: 32px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+.hero-slide .hero-cta .btn {
+    background: transparent; color: white;
+    border: 1px solid rgba(255,255,255,.5);
+    padding: 14px 32px;
+}
+.hero-slide .hero-cta .btn:hover { background: white; color: var(--navy); border-color: white; }
+
+/* Logo decoration üst-orta (Göltaş'taki temiz görünüm) */
+.hero-logo-mark {
+    position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+    z-index: 3;
+    font-family: 'Fraunces', serif; font-weight: 200;
+    font-size: 14px; letter-spacing: .35em; color: rgba(255,255,255,.55);
+    text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 14px;
+}
+.hero-logo-mark::before, .hero-logo-mark::after {
+    content: ''; width: 50px; height: 1px; background: rgba(255,255,255,.3);
+}
+@media (max-width: 600px) { .hero-logo-mark { font-size: 11px; top: 18%; } }
 
 /* ════════════════════════════════════════════════════
    MANİFESTO BLOĞU (büyük, dramatik)

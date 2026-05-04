@@ -38,82 +38,71 @@ require_once __DIR__ . '/includes/templates/header.php';
 ?>
 
 <!-- ════════════════════════════════════════════════════
-     1. HERO SLIDER
+     1. HERO SLIDER — Göltaş tarzı minimalist
      ════════════════════════════════════════════════════ -->
 <section class="hero-slider" id="anasayfa">
+
+    <!-- Üst-orta logo decoration (sade, statik — slide ile değişmez) -->
+    <div class="hero-logo-mark">Aksoy Group</div>
+
+    <!-- 5 Slide -->
     <div class="hero-slide active" data-slide="1">
         <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 20% 80%, rgba(184,151,93,.25), transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(15,44,79,.6), transparent 50%), linear-gradient(135deg, #0F2C4F 0%, #08172E 100%);"></div>
+        <div class="hero-badge">Topluluğumuz</div>
         <div class="container">
-            <span class="pretitle">Aksoy Group</span>
-            <h1>Yarattığı farkla büyüyen, <em>öncü ve saygın</em> bir Türkiye topluluğu.</h1>
-            <p class="lead">On sektörde uzmanlaşmış iştiraklerimizle, Türkiye'nin köklü hizmetler topluluklarından biriyiz. <?= $grupYasi ?>+ yıllık deneyimle geleceği inşa ediyoruz.</p>
-            <div class="hero-cta">
-                <a href="#hakkimizda" class="btn primary">Topluluğu Tanıyın <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                <a href="#sektorler" class="btn outline">Faaliyet Alanlarımız</a>
-            </div>
-        </div>
-    </div>
-    <div class="hero-slide" data-slide="2">
-        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 70% 50%, rgba(111,26,46,.35), transparent 60%), linear-gradient(135deg, #08172E 0%, #1A3A5F 100%);"></div>
-        <div class="container">
-            <span class="pretitle">Vizyon</span>
-            <h1>Endüstriyel derinlik, <em>dijital hız</em>.</h1>
-            <p class="lead">Demir-çeliğin ağırlığını yazılımın çevikliğiyle birleştirdiğimiz, on farklı sektörde tek vizyon altında yürüyen bir hizmetler topluluğu.</p>
-            <div class="hero-cta">
-                <a href="#istirakler" class="btn primary">İştiraklerimiz <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            </div>
-        </div>
-    </div>
-    <div class="hero-slide" data-slide="3">
-        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 30% 30%, rgba(31,122,77,.30), transparent 60%), linear-gradient(135deg, #0F2C4F 0%, #1F3550 100%);"></div>
-        <div class="container">
-            <span class="pretitle">Sürdürülebilirlik</span>
-            <h1>Bugünden geleceğe, <em>sorumlu üretim</em>.</h1>
-            <p class="lead">Çevresel etkimizi azaltmak, sosyal dayanışmayı güçlendirmek ve kurumsal yönetişimi yükseltmek — sadece raporlamak için değil, gerçekten yaşamak için çalışıyoruz.</p>
-            <div class="hero-cta">
-                <a href="#surdurulebilirlik" class="btn primary">Yaklaşımımız <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            </div>
-        </div>
-    </div>
-    <div class="hero-slide" data-slide="4">
-        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 80% 70%, rgba(184,151,93,.2), transparent 50%), linear-gradient(135deg, #1A3A5F 0%, #08172E 100%);"></div>
-        <div class="container">
-            <span class="pretitle">Liderlik</span>
-            <h1>Vizyonun arkasındaki <em>liderlik kadrosu</em>.</h1>
-            <p class="lead">Aksoy Group'u şekillendiren strateji, uzun vadeli yatırım vizyonu ve kurumsal yönetim disiplini — yönetim kurulu üyelerimizin deneyim ve birikiminin ürünüdür.</p>
-            <div class="hero-cta">
-                <a href="#yonetim-kurulu" class="btn primary">Yönetim Kurulu <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            </div>
-        </div>
-    </div>
-    <div class="hero-slide" data-slide="5">
-        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 50% 50%, rgba(184,151,93,.18), transparent 60%), linear-gradient(135deg, #0F2C4F 0%, #08172E 60%, #1A3A5F 100%);"></div>
-        <div class="container">
-            <span class="pretitle">Kariyer ve Yaşam</span>
-            <h1>Geleceği <em>birlikte</em> inşa edelim.</h1>
-            <p class="lead">500+ çalışan, 10 sektör, sayısız fırsat. Anadolu'nun üretim merkezi Konya'da, dijital iştiraklerimizle dünyaya açılan bir ailenin parçası olun.</p>
-            <div class="hero-cta">
-                <a href="#kariyer" class="btn primary">Kariyer Fırsatları <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            </div>
+            <h1>Yarattığı farkla büyüyen, <em>öncü ve saygın</em> bir Türkiye topluluğu</h1>
         </div>
     </div>
 
-    <div class="hero-indicator">
-        <span class="num" id="heroIndicatorNum">01</span>
-        <span class="total">— 05</span>
+    <div class="hero-slide" data-slide="2">
+        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 70% 50%, rgba(111,26,46,.35), transparent 60%), linear-gradient(135deg, #08172E 0%, #1A3A5F 100%);"></div>
+        <div class="hero-badge">Vizyonumuz</div>
+        <div class="container">
+            <h1>Endüstriyel derinlik, <em>dijital hız</em></h1>
+        </div>
     </div>
-    <div class="hero-controls">
-        <div class="hero-dots" id="heroDots">
-            <button class="hero-dot active" data-go="1" aria-label="Slide 1"></button>
-            <button class="hero-dot" data-go="2" aria-label="Slide 2"></button>
-            <button class="hero-dot" data-go="3" aria-label="Slide 3"></button>
-            <button class="hero-dot" data-go="4" aria-label="Slide 4"></button>
-            <button class="hero-dot" data-go="5" aria-label="Slide 5"></button>
+
+    <div class="hero-slide" data-slide="3">
+        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 30% 30%, rgba(31,122,77,.30), transparent 60%), linear-gradient(135deg, #0F2C4F 0%, #1F3550 100%);"></div>
+        <div class="hero-badge">Sürdürülebilirlik</div>
+        <div class="container">
+            <h1>Bugünden geleceğe, <em>sorumlu üretim</em></h1>
         </div>
-        <div class="hero-arrows">
-            <button class="hero-arrow" id="heroPrev" aria-label="Önceki"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <button class="hero-arrow" id="heroNext" aria-label="Sonraki"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+
+    <div class="hero-slide" data-slide="4">
+        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 80% 70%, rgba(184,151,93,.2), transparent 50%), linear-gradient(135deg, #1A3A5F 0%, #08172E 100%);"></div>
+        <div class="hero-badge">Liderlik</div>
+        <div class="container">
+            <h1>Vizyonun arkasındaki <em>liderlik kadrosu</em></h1>
         </div>
+    </div>
+
+    <div class="hero-slide" data-slide="5">
+        <div class="hero-slide-bg" style="background: radial-gradient(ellipse at 50% 50%, rgba(184,151,93,.18), transparent 60%), linear-gradient(135deg, #0F2C4F 0%, #08172E 60%, #1A3A5F 100%);"></div>
+        <div class="hero-badge">Kariyer</div>
+        <div class="container">
+            <h1>Geleceği <em>birlikte</em> inşa edelim</h1>
+        </div>
+    </div>
+
+    <!-- Kenar oklar -->
+    <div class="hero-arrows-side">
+        <button class="hero-arrow-btn" id="heroPrev" aria-label="Önceki">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="hero-arrow-btn" id="heroNext" aria-label="Sonraki">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+    </div>
+
+    <!-- Sayılı pagination — Göltaş'taki gibi 1-2-3-4-5 alt orta -->
+    <div class="hero-paging" id="heroPaging">
+        <button class="hero-num active" data-go="1">01</button>
+        <button class="hero-num" data-go="2">02</button>
+        <button class="hero-num" data-go="3">03</button>
+        <button class="hero-num" data-go="4">04</button>
+        <button class="hero-num" data-go="5">05</button>
     </div>
 </section>
 
@@ -455,15 +444,13 @@ require_once __DIR__ . '/includes/templates/header.php';
 <script>
 (function() {
     const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.hero-dot');
-    const indicator = document.getElementById('heroIndicatorNum');
+    const nums = document.querySelectorAll('.hero-num');
     let current = 0;
     let timer = null;
 
     function go(i) {
         slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
-        dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-        indicator.textContent = String(i + 1).padStart(2, '0');
+        nums.forEach((n, idx) => n.classList.toggle('active', idx === i));
         current = i;
     }
     function next() { go((current + 1) % slides.length); }
@@ -471,7 +458,7 @@ require_once __DIR__ . '/includes/templates/header.php';
     function startAuto() { timer = setInterval(next, 6500); }
     function stopAuto() { clearInterval(timer); }
 
-    dots.forEach((d, i) => d.addEventListener('click', () => { stopAuto(); go(i); startAuto(); }));
+    nums.forEach((n, i) => n.addEventListener('click', () => { stopAuto(); go(i); startAuto(); }));
     document.getElementById('heroPrev').addEventListener('click', () => { stopAuto(); prev(); startAuto(); });
     document.getElementById('heroNext').addEventListener('click', () => { stopAuto(); next(); startAuto(); });
 
