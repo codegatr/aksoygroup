@@ -38,7 +38,7 @@ $kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@200;300;400;500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;500&family=Inter:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/site.css') ?>">
 <link rel="icon" type="image/svg+xml" href="<?= asset('assets/img/favicon.svg') ?>">
 </head>

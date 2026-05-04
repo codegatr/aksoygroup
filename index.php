@@ -63,7 +63,7 @@ require_once __DIR__ . '/includes/templates/header.php';
     <div class="container">
         <div class="section-head">
             <span class="pretitle">Faaliyet Alanları</span>
-            <h2>Demir-çeliğin gücü, <em style="color:var(--gold)">yazılımın zekâsı</em></h2>
+            <h2>Demir-çeliğin gücü, <em style="color:var(--burgundy)">yazılımın zekâsı</em></h2>
             <p class="lead">Endüstriyel üretimden dijital teknolojiye, sigortadan lojistiğe — on sektörde stratejik yatırımlar.</p>
         </div>
 
@@ -89,7 +89,7 @@ require_once __DIR__ . '/includes/templates/header.php';
     <div class="container">
         <div class="section-head">
             <span class="pretitle">İştiraklerimiz</span>
-            <h2>Topluluk altında, <em style="color:var(--gold)">bağımsız markalar</em></h2>
+            <h2>Topluluk altında, <em style="color:var(--burgundy)">bağımsız markalar</em></h2>
             <p class="lead">Her biri kendi sektöründe lider olmaya odaklanmış grup şirketlerimiz.</p>
         </div>
 
@@ -127,7 +127,7 @@ require_once __DIR__ . '/includes/templates/header.php';
     <div class="container">
         <div class="section-head">
             <span class="pretitle">Topluluktan Haberler</span>
-            <h2>Son <em style="color:var(--gold)">gelişmeler</em></h2>
+            <h2>Son <em style="color:var(--burgundy)">gelişmeler</em></h2>
         </div>
 
         <div class="news-grid">
@@ -136,7 +136,7 @@ require_once __DIR__ . '/includes/templates/header.php';
                 <?php if (!empty($hb['kapak_gorsel'])): ?>
                 <div class="cover"><img src="<?= h(uploadUrl($hb['kapak_gorsel'])) ?>" alt="<?= ha($hb['baslik']) ?>"></div>
                 <?php else: ?>
-                <div class="cover" style="display:flex;align-items:center;justify-content:center;color:var(--gold-dark);font-family:'Fraunces',serif;font-weight:200;font-size:80px">A</div>
+                <div class="cover" style="display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Fraunces',serif;font-weight:200;font-size:80px">A</div>
                 <?php endif; ?>
                 <div class="body">
                     <div class="meta">
@@ -162,11 +162,11 @@ require_once __DIR__ . '/includes/templates/header.php';
 
 <!-- ════════ ZAMAN ÇİZGİSİ ════════ -->
 <?php if ($zaman): ?>
-<section class="section alt">
+<section class="section dark">
     <div class="container">
         <div class="section-head">
             <span class="pretitle">Tarihçe</span>
-            <h2>Bir <em style="color:var(--gold)">topluluk</em> nasıl doğar?</h2>
+            <h2>Bir <em>topluluk</em> nasıl doğar?</h2>
         </div>
 
         <div class="timeline">
@@ -183,9 +183,9 @@ require_once __DIR__ . '/includes/templates/header.php';
 <?php endif; ?>
 
 <!-- ════════ İLETİŞİM CTA ════════ -->
-<section class="section dark" style="text-align:center">
+<section class="section tight" style="text-align:center;background:var(--bg-2)">
     <div class="container">
-        <div class="section-head">
+        <div class="section-head" style="margin-bottom:32px">
             <span class="pretitle">Birlikte Üretelim</span>
             <h2>
                 Yatırım, ortaklık ya da işbirliği — <em>konuşalım</em>.
