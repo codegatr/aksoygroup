@@ -175,7 +175,7 @@ $csrfToken = CSRF::token();
     <!-- ════ OVERVIEW ════ -->
     <div class="upd-body on" data-pane="overview">
         <div class="upd-rs">
-            <div class="upd-rs-h">REPOSITORY STATUS · <?= h(AG_GITHUB_OWNER) ?>/<?= h(AG_GITHUB_REPO) ?> · <?= h(AG_GITHUB_BRANCH) ?></div>
+            <div class="upd-rs-h">REPOSITORY STATUS · <?= h($updater->getOwner()) ?>/<?= h($updater->getRepo()) ?> · <?= h($updater->getBranch()) ?></div>
             <div class="upd-ver">
                 <div class="upd-vbox">
                     <div class="upd-vlbl">LOCAL</div>
@@ -376,8 +376,8 @@ $csrfToken = CSRF::token();
                 <table class="data">
                     <tbody>
                         <tr><td>Mevcut Sürüm</td><td><b>v<?= h($current) ?></b></td></tr>
-                        <tr><td>Repo</td><td><code><?= h(AG_GITHUB_OWNER) ?>/<?= h(AG_GITHUB_REPO) ?></code></td></tr>
-                        <tr><td>Branş</td><td><code><?= h(AG_GITHUB_BRANCH) ?></code></td></tr>
+                        <tr><td>Repo</td><td><code><?= h($updater->getOwner()) ?>/<?= h($updater->getRepo()) ?></code> <span class="badge muted" style="margin-left:8px;font-size:10px"><?= $updater->getRepoSource() === 'db' ? 'DB' : 'config.php' ?></span></td></tr>
+                        <tr><td>Branş</td><td><code><?= h($updater->getBranch()) ?></code></td></tr>
                         <tr><td>Token Durumu</td><td><?= $tokenSet ? '<span class="badge success">Tanımlı</span>' : '<span class="badge warning">Tanımsız</span>' ?></td></tr>
                         <tr><td>PHP Sürümü</td><td><?= h(PHP_VERSION) ?></td></tr>
                         <tr><td>cURL</td><td><?= function_exists('curl_init') ? '<span class="badge success">Var</span>' : '<span class="badge danger">Yok</span>' ?></td></tr>
@@ -450,12 +450,30 @@ async function updFetch(action, opts) {
     opts.headers['X-CSRF-Token'] = AG_CSRF;
     opts.headers['X-Requested-With'] = 'XMLHttpRequest';
     opts.headers['Accept'] = 'application/json';
+    // FormData'ya da CSRF ekle (header proxylenmezse fallback)
+    if (opts.body instanceof FormData) {
+        opts.body.append('_csrf', AG_CSRF);
+        opts.body.append('csrf_token', AG_CSRF);
+    } else if (opts.method === 'POST' && !opts.body) {
+        const fd = new FormData();
+        fd.append('_csrf', AG_CSRF);
+        fd.append('csrf_token', AG_CSRF);
+        opts.body = fd;
+    }
     const r = await fetch(AG_API + '?action=' + action, opts);
     const t = await r.text();
+
+    // 419 — CSRF süresi doldu → otomatik refresh teklif
+    if (r.status === 419) {
+        if (confirm('Oturum süresi doldu (CSRF token).\n\nTamam: sayfayı yenile (önerilir)\nİptal: hiçbir şey yapma')) {
+            location.reload();
+        }
+        throw new Error('CSRF süresi doldu (419) — sayfa yenilenmeli');
+    }
+
     try { return JSON.parse(t); }
     catch (e) {
         if (r.status === 401 || r.status === 403) throw new Error('Yetki hatası — oturumu yenileyin (HTTP ' + r.status + ')');
-        if (r.status === 419) throw new Error('Oturum süresi doldu — sayfayı yenileyin');
         throw new Error('Geçersiz JSON yanıt (HTTP ' + r.status + '): ' + t.substring(0, 200));
     }
 }

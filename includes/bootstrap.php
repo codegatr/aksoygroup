@@ -23,6 +23,17 @@ if (file_exists($versionFile)) {
     require_once $versionFile;
 }
 
+// ── ESKİ KURULUMLAR İÇİN FALLBACK SABİTLER ──────────
+// Yunus'un eski config.php'sinde bu sabitler eksik olabilir;
+// undefined olursa sayfa kırılmasın diye varsayılan değerler ata.
+if (!defined('AG_CSRF_LIFETIME'))   define('AG_CSRF_LIFETIME', 28800);     // 8 saat
+if (!defined('AG_GITHUB_OWNER'))    define('AG_GITHUB_OWNER', 'codegatr');
+if (!defined('AG_GITHUB_REPO'))     define('AG_GITHUB_REPO', 'aksoygroup');
+if (!defined('AG_GITHUB_BRANCH'))   define('AG_GITHUB_BRANCH', 'main');
+if (!defined('AG_VERSION'))         define('AG_VERSION', '1.0.6');
+if (!defined('AG_TIMEZONE'))        define('AG_TIMEZONE', 'Europe/Istanbul');
+if (!defined('AG_PUBLIC_UPLOADS'))  define('AG_PUBLIC_UPLOADS', '/uploads');
+
 // 2. Çekirdek sınıflar
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/helpers.php';

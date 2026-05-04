@@ -205,9 +205,10 @@ try {
                 'token_in_file'      => false,
                 'storage_writable'   => is_writable(AG_ROOT . '/storage'),
                 'db_connect'         => false,
-                'github_owner'       => AG_GITHUB_OWNER,
-                'github_repo'        => AG_GITHUB_REPO,
-                'github_branch'      => AG_GITHUB_BRANCH,
+                'github_owner'       => $updater->getOwner(),
+                'github_repo'        => $updater->getRepo(),
+                'github_repo_source' => $updater->getRepoSource(),
+                'github_branch'      => $updater->getBranch(),
                 'local_version'      => Updater::localVersion(),
             ];
             try {
@@ -228,7 +229,7 @@ try {
         // COMMITS — son 20 commit
         // ───────────────────────────────────────────
         case 'commits': {
-            $commits = $updater->ghAPI('/commits?per_page=20&sha=' . AG_GITHUB_BRANCH);
+            $commits = $updater->ghAPI('/commits?per_page=20&sha=' . $updater->getBranch());
             if (!$commits) jsonResponse(['ok' => false, 'error' => 'Commits alınamadı.']);
             $simplified = array_map(fn($c) => [
                 'sha'     => substr((string)($c['sha'] ?? ''), 0, 7),

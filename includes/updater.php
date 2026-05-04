@@ -38,9 +38,22 @@ class Updater
 
     public function __construct()
     {
-        $this->owner   = AG_GITHUB_OWNER;
-        $this->repo    = AG_GITHUB_REPO;
-        $this->branch  = AG_GITHUB_BRANCH;
+        // Repo: DB ag_settings.github_repo öncelikli, config.php fallback
+        // (Eski kurulumlarda config.php'de AG_GITHUB_REPO yanlış yazıyor olabilir)
+        $owner = defined('AG_GITHUB_OWNER') ? AG_GITHUB_OWNER : 'codegatr';
+        $repo = defined('AG_GITHUB_REPO') ? AG_GITHUB_REPO : 'aksoygroup';
+        try {
+            $dbRepo = (string)DB::scalar("SELECT setting_value FROM ag_settings WHERE setting_key = 'github_repo'");
+            if ($dbRepo && strpos($dbRepo, '/') !== false) {
+                [$dbOwner, $dbRepoName] = array_map('trim', explode('/', $dbRepo, 2));
+                if ($dbOwner) $owner = $dbOwner;
+                if ($dbRepoName) $repo = $dbRepoName;
+            }
+        } catch (Throwable $e) {}
+
+        $this->owner   = $owner;
+        $this->repo    = $repo;
+        $this->branch  = defined('AG_GITHUB_BRANCH') ? AG_GITHUB_BRANCH : 'main';
         $this->current = self::localVersion();
 
         if (!is_dir(self::BACKUP_DIR)) @mkdir(self::BACKUP_DIR, 0755, true);
@@ -743,4 +756,15 @@ class Updater
     }
 
     public function currentVersion(): string { return $this->current; }
+    public function getOwner(): string { return $this->owner; }
+    public function getRepo(): string { return $this->repo; }
+    public function getBranch(): string { return $this->branch; }
+    public function getRepoSource(): string {
+        // Repo bilgisi nereden geldi? DB veya config?
+        try {
+            $dbRepo = (string)DB::scalar("SELECT setting_value FROM ag_settings WHERE setting_key = 'github_repo'");
+            if ($dbRepo && strpos($dbRepo, '/') !== false) return 'db';
+        } catch (Throwable $e) {}
+        return 'config';
+    }
 }
