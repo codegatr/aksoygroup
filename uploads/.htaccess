@@ -1,0 +1,5 @@
+# Public okuma izinli, PHP execution kapalı
+<FilesMatch "\.(php|phtml|phps|cgi|pl|py|sh)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

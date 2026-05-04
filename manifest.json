@@ -1,0 +1,25 @@
+{
+  "name": "AKSOY GROUP",
+  "slug": "aksoygroup",
+  "domain": "aksoy.web.tr",
+  "version": "1.0.1",
+  "release_name": "Lojistik & Hizmetler Topluluğu",
+  "release_date": "2026-05-04",
+  "php_required": "8.3.0",
+  "mysql_required": "10.6.0",
+  "repo": "codegatr/aksoygroup",
+  "branch": "main",
+  "update_method": "github_releases",
+  "license": "Proprietary — AKSOY GROUP",
+  "author": {
+    "name": "CODEGA",
+    "url": "https://codega.com.tr"
+  },
+  "modules": {
+    "core": "1.0.0",
+    "admin": "1.0.0",
+    "frontend": "1.0.0",
+    "updater": "1.0.0"
+  },
+  "description": "Aksoy Group — Hizmetler Topluluğu Platformu"
+}
