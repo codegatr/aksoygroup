@@ -3,7 +3,7 @@
   "slug": "aksoygroup",
   "domain": "aksoy.web.tr",
   "version": "1.0.5",
-  "release_name": "Token Save Hotfix",
+  "release_name": "Smart Update Hotfix",
   "release_date": "2026-05-04",
   "php_required": "8.3.0",
   "mysql_required": "10.6.0",

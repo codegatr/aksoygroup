@@ -131,37 +131,71 @@ class Updater
         return '';
     }
 
-    public function saveToken(string $tok): bool
+    /**
+     * Token kaydet — detaylı sonuç döner.
+     * @return array{ok:bool, file:bool, db:bool, error:?string, where:string}
+     */
+    public function saveToken(string $tok): array
     {
-        $tok = preg_replace('/[^a-zA-Z0-9_\-]/', '', trim($tok));
-        if (!$tok) return false;
+        $original = trim($tok);
+        $tok = preg_replace('/[^a-zA-Z0-9_\-]/', '', $original);
+        if (!$tok) {
+            return ['ok' => false, 'file' => false, 'db' => false, 'where' => 'none',
+                    'error' => 'Token boş veya geçersiz karakter içeriyor.'];
+        }
+        if (strlen($tok) < 10) {
+            return ['ok' => false, 'file' => false, 'db' => false, 'where' => 'none',
+                    'error' => 'Token çok kısa (' . strlen($tok) . ' karakter).'];
+        }
 
         $savedFile = false;
         $savedDb = false;
+        $errors = [];
 
-        // 1) Dosyaya yazmayı dene (.gh_token)
+        // 1) Dosyaya yazmayı dene
         $tokenDir = dirname(self::TOKEN_FILE);
-        if (is_writable($tokenDir) || is_writable(self::TOKEN_FILE)) {
-            if (@file_put_contents(self::TOKEN_FILE, $tok) !== false) {
+        if (!is_dir($tokenDir)) {
+            $errors[] = 'includes/ klasörü yok: ' . $tokenDir;
+        } elseif (!is_writable($tokenDir) && !is_writable(self::TOKEN_FILE)) {
+            $errors[] = 'includes/ klasörü yazma izni yok (chmod 755 veya 775 deneyin)';
+        } else {
+            $bytes = @file_put_contents(self::TOKEN_FILE, $tok);
+            if ($bytes === false) {
+                $errors[] = 'file_put_contents başarısız: ' . (error_get_last()['message'] ?? '?');
+            } else {
                 @chmod(self::TOKEN_FILE, 0600);
                 $savedFile = true;
             }
         }
 
-        // 2) DB'ye fallback (her durumda yaz — okurken file öncelikli)
+        // 2) DB'ye fallback (her durumda yazılır)
         try {
-            DB::exec(
-                "INSERT INTO ag_settings (setting_key, setting_value, setting_group, setting_type, label, sort_order, is_public)
-                 VALUES ('github_token', ?, 'sistem', 'text', 'GitHub Token', 20, 0)
-                 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)",
-                [$tok]
-            );
+            $exists = DB::scalar("SELECT 1 FROM ag_settings WHERE setting_key = 'github_token'");
+            if ($exists) {
+                DB::exec("UPDATE ag_settings SET setting_value = ? WHERE setting_key = 'github_token'", [$tok]);
+            } else {
+                DB::exec(
+                    "INSERT INTO ag_settings (setting_key, setting_value, setting_group, setting_type, label, sort_order, is_public)
+                     VALUES ('github_token', ?, 'sistem', 'text', 'GitHub Token', 20, 0)",
+                    [$tok]
+                );
+            }
             $savedDb = true;
         } catch (Throwable $e) {
+            $errors[] = 'DB hatası: ' . $e->getMessage();
             error_log('[Updater::saveToken] DB hatası: ' . $e->getMessage());
         }
 
-        return $savedFile || $savedDb;
+        $where = $savedFile && $savedDb ? 'file+db' : ($savedFile ? 'file' : ($savedDb ? 'db' : 'none'));
+
+        return [
+            'ok'    => $savedFile || $savedDb,
+            'file'  => $savedFile,
+            'db'    => $savedDb,
+            'where' => $where,
+            'error' => $errors ? implode(' | ', $errors) : null,
+            'len'   => strlen($tok),
+        ];
     }
 
     public function ghAPI(string $path): ?array

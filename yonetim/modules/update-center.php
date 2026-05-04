@@ -360,6 +360,17 @@ $csrfToken = CSRF::token();
         </div>
 
         <div class="card mt">
+            <div class="card-head">
+                <h2><?= icon('activity', 18) ?> &nbsp;Sistem Teşhisi</h2>
+                <button class="btn outline btn-sm" onclick="updDiagnose()"><?= icon('refresh', 14) ?> Çalıştır</button>
+            </div>
+            <div class="card-body">
+                <p class="muted" style="font-size:13px;margin-bottom:14px">Token kaydedilmiyor mu? Bu butona basın — sunucu durumu, dosya izinleri ve token konumu raporlanır.</p>
+                <div id="upd-diag-out"><div class="muted" style="font-size:13px">Henüz çalıştırılmadı.</div></div>
+            </div>
+        </div>
+
+        <div class="card mt">
             <div class="card-head"><h2><?= icon('database', 18) ?> &nbsp;Sistem Bilgileri</h2></div>
             <div class="card-body">
                 <table class="data">
@@ -711,8 +722,8 @@ async function updSaveToken(event) {
     const tok = $u('upd-token').value.trim();
     const btn = event ? event.target.closest('button') : null;
     if (!tok) { updToast('Token boş olamaz', 'error'); return; }
-    if (!/^(ghp_|github_pat_|gho_)[A-Za-z0-9_]{20,}$/.test(tok)) {
-        updToast('Token formatı geçersiz: ghp_… veya github_pat_… ile başlamalı', 'error');
+    if (!/^(ghp_|gho_|ghs_|ghr_|github_pat_)[A-Za-z0-9_\-]{20,}$/.test(tok)) {
+        updToast('Token formatı geçersiz: ghp_… / gho_… / github_pat_… ile başlamalı (en az 24 karakter)', 'error');
         return;
     }
     if (btn) { btn.disabled = true; btn.dataset.orig = btn.innerHTML; btn.innerHTML = '⏳ Kaydediliyor…'; }
@@ -736,6 +747,43 @@ async function updSaveToken(event) {
         console.error('[token save] hata:', e);
         updToast(e.message, 'error');
         alert('AĞ HATASI\n\n' + e.message + '\n\nF12 → Network sekmesinden api/update.php?action=save_token isteğine bakın.');
+    }
+}
+
+// ── DIAGNOSE — Sistem teşhisi ─────────────────────
+async function updDiagnose() {
+    const out = $u('upd-diag-out');
+    out.innerHTML = '<div class="muted">Kontrol ediliyor…</div>';
+    try {
+        const d = await updFetch('diagnose');
+        if (!d.ok) { out.innerHTML = '<div style="color:var(--danger)">✗ ' + d.error + '</div>'; return; }
+        const c = d.checks;
+        const pill = (v, ok) => '<span style="display:inline-block;padding:2px 9px;border-radius:100px;background:' +
+            (ok === false ? 'rgba(184,42,42,.12);color:var(--danger)' : ok ? 'rgba(31,122,77,.15);color:var(--success)' : 'var(--bg-soft);color:var(--text-mute)') +
+            ';font-size:11px;letter-spacing:.05em">' + v + '</span>';
+        const yn = b => b === true ? pill('VAR', true) : (b === false ? pill('YOK', false) : pill(String(b||'—'), null));
+        out.innerHTML = `<table class="data" style="font-size:13px"><tbody>
+            <tr><td>PHP Sürümü</td><td>${pill(c.php_version, c.php_ok)}</td></tr>
+            <tr><td>cURL</td><td>${yn(c.curl)}</td></tr>
+            <tr><td>ZipArchive</td><td>${yn(c.zip)}</td></tr>
+            <tr><td>mbstring</td><td>${yn(c.mb_string)}</td></tr>
+            <tr><td>allow_url_fopen</td><td>${yn(c.allow_url_fopen)}</td></tr>
+            <tr><td>DB bağlantısı</td><td>${yn(c.db_connect)}</td></tr>
+            <tr style="border-top:2px solid var(--border)"><td colspan="2" style="background:var(--bg-soft);padding:8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dark)">Token Durumu</td></tr>
+            <tr><td>Dosya yolu</td><td><code style="font-size:11px">${c.token_file_path}</code></td></tr>
+            <tr><td>Dizin yazılabilir</td><td>${yn(c.token_dir_writable)}</td></tr>
+            <tr><td>Dosya var</td><td>${yn(c.token_file_exists)}</td></tr>
+            <tr><td>Dosya yazılabilir</td><td>${yn(c.token_file_writable)}</td></tr>
+            <tr><td>Dosyada token</td><td>${typeof c.token_in_file === 'string' ? c.token_in_file : (c.token_in_file === false ? pill('YOK', false) : '—')}</td></tr>
+            <tr><td>DB'de token</td><td>${typeof c.token_in_db === 'string' ? c.token_in_db : (c.token_in_db === false ? pill('YOK', false) : '—')}</td></tr>
+            <tr style="border-top:2px solid var(--border)"><td colspan="2" style="background:var(--bg-soft);padding:8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dark)">GitHub & Sistem</td></tr>
+            <tr><td>Owner / Repo</td><td><code>${c.github_owner}/${c.github_repo}</code></td></tr>
+            <tr><td>Branş</td><td><code>${c.github_branch}</code></td></tr>
+            <tr><td>Yerel sürüm</td><td><b>v${c.local_version}</b></td></tr>
+            <tr><td>storage/ yazılabilir</td><td>${yn(c.storage_writable)}</td></tr>
+        </tbody></table>`;
+    } catch (e) {
+        out.innerHTML = '<div style="color:var(--danger)">✗ ' + e.message + '</div>';
     }
 }
 

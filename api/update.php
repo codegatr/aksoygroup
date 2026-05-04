@@ -154,29 +154,74 @@ try {
         case 'save_token': {
             $tok = trim($_POST['token'] ?? '');
             if (!$tok) jsonResponse(['ok' => false, 'error' => 'Token boş olamaz.']);
-            if (!preg_match('/^(ghp_|github_pat_|gho_)[A-Za-z0-9_]{20,}$/', $tok)) {
-                jsonResponse(['ok' => false, 'error' => 'Token formatı geçersiz. ghp_… veya github_pat_… ile başlamalı.']);
-            }
-            $ok = $updater->saveToken($tok);
-            if (!$ok) {
-                $diag = [
-                    'token_dir_writable'  => is_writable(dirname(Updater::TOKEN_FILE)),
-                    'token_file_writable' => file_exists(Updater::TOKEN_FILE) ? is_writable(Updater::TOKEN_FILE) : 'yok',
-                    'token_file_path'     => Updater::TOKEN_FILE,
-                ];
+            // Esnek regex: ghp_/gho_/ghs_/ghr_/github_pat_ + alfanum/altçizgi/tire, en az 20 char
+            if (!preg_match('/^(ghp_|gho_|ghs_|ghr_|github_pat_)[A-Za-z0-9_\-]{20,}$/', $tok)) {
                 jsonResponse([
-                    'ok'    => false,
-                    'error' => 'Token kaydedilemedi (ne dosyaya ne DB\'ye). Diagnostik: ' . json_encode($diag),
+                    'ok' => false,
+                    'error' => 'Token formatı geçersiz. ghp_… / gho_… / github_pat_… ile başlamalı, en az 24 karakter olmalı. Girdiğiniz: ' . strlen($tok) . ' karakter, ön ek: ' . substr($tok, 0, 4)
                 ]);
             }
-            Audit::log('update_token_set', 'system');
-            // Yeni token'ı doğrula
+            $r = $updater->saveToken($tok);
+            if (!$r['ok']) {
+                jsonResponse([
+                    'ok'    => false,
+                    'error' => 'Kaydedilemedi: ' . ($r['error'] ?? 'bilinmeyen hata'),
+                    'where' => $r['where'],
+                    'file'  => $r['file'],
+                    'db'    => $r['db'],
+                ]);
+            }
+            Audit::log('update_token_set', 'system', null, null, ['where' => $r['where'], 'len' => $r['len']]);
             $stored = $updater->token();
             jsonResponse([
                 'ok'         => true,
-                'storage'    => is_writable(dirname(Updater::TOKEN_FILE)) || file_exists(Updater::TOKEN_FILE) ? 'file' : 'db',
+                'where'      => $r['where'],   // 'file', 'db', veya 'file+db'
+                'file'       => $r['file'],
+                'db'         => $r['db'],
                 'token_tail' => substr($stored, -4),
+                'len'        => $r['len'],
             ]);
+        }
+
+        // ───────────────────────────────────────────
+        // DIAGNOSE — sistem teşhisi
+        // ───────────────────────────────────────────
+        case 'diagnose': {
+            $tokenFile = Updater::TOKEN_FILE;
+            $tokenDir = dirname($tokenFile);
+            $checks = [
+                'php_version'        => PHP_VERSION,
+                'php_ok'             => version_compare(PHP_VERSION, '8.3', '>='),
+                'curl'               => function_exists('curl_init'),
+                'zip'                => class_exists('ZipArchive'),
+                'mb_string'          => function_exists('mb_substr'),
+                'allow_url_fopen'    => (bool)ini_get('allow_url_fopen'),
+                'token_file_path'    => $tokenFile,
+                'token_dir_exists'   => is_dir($tokenDir),
+                'token_dir_writable' => is_writable($tokenDir),
+                'token_file_exists'  => file_exists($tokenFile),
+                'token_file_writable'=> file_exists($tokenFile) ? is_writable($tokenFile) : null,
+                'token_in_db'        => false,
+                'token_in_file'      => false,
+                'storage_writable'   => is_writable(AG_ROOT . '/storage'),
+                'db_connect'         => false,
+                'github_owner'       => AG_GITHUB_OWNER,
+                'github_repo'        => AG_GITHUB_REPO,
+                'github_branch'      => AG_GITHUB_BRANCH,
+                'local_version'      => Updater::localVersion(),
+            ];
+            try {
+                $checks['db_connect'] = (bool)DB::scalar('SELECT 1');
+                $tokInDb = DB::scalar("SELECT setting_value FROM ag_settings WHERE setting_key='github_token'");
+                $checks['token_in_db'] = $tokInDb ? '••••' . substr((string)$tokInDb, -4) . ' (' . strlen((string)$tokInDb) . ' kar)' : false;
+            } catch (Throwable $e) {
+                $checks['db_error'] = $e->getMessage();
+            }
+            if (file_exists($tokenFile)) {
+                $tokInFile = trim((string)@file_get_contents($tokenFile));
+                $checks['token_in_file'] = $tokInFile ? '••••' . substr($tokInFile, -4) . ' (' . strlen($tokInFile) . ' kar)' : false;
+            }
+            jsonResponse(['ok' => true, 'checks' => $checks]);
         }
 
         // ───────────────────────────────────────────
