@@ -435,17 +435,18 @@ function updToast(msg, kind) {
 async function updFetch(action, opts) {
     opts = opts || {};
     opts.credentials = 'same-origin';
-    if (opts.method === 'POST' && !opts.body) {
-        const fd = new FormData();
-        fd.append('csrf_token', AG_CSRF);
-        opts.body = fd;
-    } else if (opts.body instanceof FormData) {
-        opts.body.append('csrf_token', AG_CSRF);
-    }
+    opts.headers = opts.headers || {};
+    opts.headers['X-CSRF-Token'] = AG_CSRF;
+    opts.headers['X-Requested-With'] = 'XMLHttpRequest';
+    opts.headers['Accept'] = 'application/json';
     const r = await fetch(AG_API + '?action=' + action, opts);
     const t = await r.text();
     try { return JSON.parse(t); }
-    catch (e) { throw new Error('Geçersiz JSON yanıt: ' + t.substring(0, 200)); }
+    catch (e) {
+        if (r.status === 401 || r.status === 403) throw new Error('Yetki hatası — oturumu yenileyin (HTTP ' + r.status + ')');
+        if (r.status === 419) throw new Error('Oturum süresi doldu — sayfayı yenileyin');
+        throw new Error('Geçersiz JSON yanıt (HTTP ' + r.status + '): ' + t.substring(0, 200));
+    }
 }
 
 // ── Overlay (live console) ───────────────────────
