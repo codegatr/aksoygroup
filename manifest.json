@@ -2,8 +2,8 @@
   "name": "AKSOY GROUP",
   "slug": "aksoygroup",
   "domain": "aksoy.web.tr",
-  "version": "1.0.1",
-  "release_name": "Lojistik & Hizmetler Topluluğu",
+  "version": "1.0.2",
+  "release_name": "ERP-style Updater",
   "release_date": "2026-05-04",
   "php_required": "8.3.0",
   "mysql_required": "10.6.0",
@@ -19,7 +19,7 @@
     "core": "1.0.0",
     "admin": "1.0.0",
     "frontend": "1.0.0",
-    "updater": "1.0.0"
+    "updater": "2.0.0"
   },
   "description": "Aksoy Group — Hizmetler Topluluğu Platformu"
 }

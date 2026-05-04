@@ -17,6 +17,12 @@ if (!file_exists($configFile)) {
     require_once $configFile;
 }
 
+// Otomatik üretilen version.php (Updater tarafından yazılır)
+$versionFile = dirname(__DIR__) . '/version.php';
+if (file_exists($versionFile)) {
+    require_once $versionFile;
+}
+
 // 2. Çekirdek sınıflar
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/helpers.php';

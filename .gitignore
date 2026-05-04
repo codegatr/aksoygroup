@@ -18,3 +18,9 @@ Thumbs.db
 node_modules/
 .vscode/
 .idea/
+
+# Storage (runtime)
+/storage/backups/*
+!/storage/backups/.gitkeep
+/storage/tmp/*
+!/storage/tmp/.gitkeep
