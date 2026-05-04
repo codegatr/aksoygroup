@@ -10,7 +10,14 @@ $ogImage   = $page['og_image'] ?? null;
 // Header menüsü: ag_pages tablosundaki menu_konumu = header / her_ikisi
 $headerPages = DB::all("SELECT slug, baslik FROM ag_pages
                        WHERE is_active = 1 AND menu_konumu IN ('header','her_ikisi')
-                       ORDER BY sort_order");
+                         AND slug NOT IN ('hakkimizda','yonetim-kurulu','surdurulebilirlik','kariyer','basin','iletisim')
+                       ORDER BY sort_order ASC");
+
+// Kurumsal alt-menü için sabit liste (her zaman aynı sırada görünsün)
+$kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
+                          WHERE is_active = 1
+                            AND slug IN ('hakkimizda','surdurulebilirlik','kariyer','basin')
+                          ORDER BY FIELD(slug,'hakkimizda','surdurulebilirlik','kariyer','basin')");
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -47,6 +54,18 @@ $headerPages = DB::all("SELECT slug, baslik FROM ag_pages
         </button>
         <nav class="site-nav" id="siteNav">
             <a href="/">Ana Sayfa</a>
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-trigger" type="button">
+                    Kurumsal
+                    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:5px"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <?php foreach ($kurumsalPages as $kp): ?>
+                        <a href="/<?= ha($kp['slug']) ?>"><?= h($kp['baslik']) ?></a>
+                    <?php endforeach; ?>
+                    <a href="/yonetim-kurulu">Yönetim Kurulu</a>
+                </div>
+            </div>
             <a href="/sektorler">Sektörler</a>
             <a href="/sirketler">Şirketler</a>
             <a href="/haberler">Haberler</a>

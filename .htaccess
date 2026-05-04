@@ -60,6 +60,10 @@ RedirectMatch 403 (?i)/(\.git|\.github|migrations|logs|includes|vendor)(/|$)
     # Sayfa: /sayfa/{slug}
     RewriteRule ^sayfa/([a-z0-9-]+)/?$ /sayfa/index.php?slug=$1 [QSA,L]
 
+    # Yönetim Kurulu (özel sayfa, ag_pages değil)
+    RewriteRule ^yonetim-kurulu/?$ /yonetim-kurulu.php [QSA,L]
+    RewriteRule ^yonetim-kurulu/([a-z0-9-]+)/?$ /yonetim-kurulu.php?slug=$1 [QSA,L]
+
     # Haber listesi
     RewriteRule ^haberler/?$ /haber/index.php [QSA,L]
     # Haber detay: /haber/{slug}

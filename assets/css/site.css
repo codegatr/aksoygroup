@@ -87,6 +87,36 @@ img { max-width: 100%; display: block; }
     display: none; background: none; border: 1px solid var(--line-2);
     padding: 8px; border-radius: 4px; cursor: pointer; color: var(--text);
 }
+
+/* Dropdown menü */
+.nav-dropdown { position: relative; }
+.nav-dropdown-trigger {
+    background: none; border: 0; padding: 0; cursor: pointer; font: inherit;
+    color: var(--text-soft); font-size: 13px; letter-spacing: .04em; font-weight: 500;
+    display: inline-flex; align-items: center; transition: color .2s;
+}
+.nav-dropdown-trigger:hover { color: var(--text); }
+.nav-dropdown-menu {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px);
+    background: var(--bg-3); border: 1px solid var(--line);
+    box-shadow: 0 16px 40px rgba(15,20,36,.12);
+    padding: 14px 0; min-width: 220px;
+    opacity: 0; visibility: hidden; transition: all .2s; margin-top: 16px;
+}
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu {
+    opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown-menu::before {
+    content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+    border-left: 8px solid transparent; border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--line);
+}
+.nav-dropdown-menu a {
+    display: block; padding: 10px 24px; font-size: 13.5px; color: var(--text-soft);
+    border-bottom: 0; transition: all .15s;
+}
+.nav-dropdown-menu a:hover { background: var(--bg-2); color: var(--gold-dark); padding-left: 28px; }
 @media (max-width: 900px) {
     .menu-btn { display: flex; }
     .site-nav {
@@ -95,9 +125,21 @@ img { max-width: 100%; display: block; }
         flex-direction: column; padding: 24px; gap: 18px;
         transform: translateY(-100%); transition: transform .25s; opacity: 0; pointer-events: none;
         box-shadow: 0 8px 24px rgba(15,20,36,.08);
+        max-height: calc(100vh - 64px); overflow-y: auto;
     }
     .site-nav.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
     .site-nav a { width: 100%; padding: 8px 0; border-bottom: 1px solid var(--line); }
+    /* Mobilde dropdown doğal akış */
+    .nav-dropdown { width: 100%; }
+    .nav-dropdown-trigger { width: 100%; padding: 8px 0; border-bottom: 1px solid var(--line); justify-content: space-between; }
+    .nav-dropdown-menu {
+        position: static; transform: none; opacity: 1; visibility: visible;
+        background: transparent; border: 0; box-shadow: none; padding: 8px 0 8px 16px;
+        min-width: auto; margin-top: 0;
+    }
+    .nav-dropdown-menu::before { display: none; }
+    .nav-dropdown-menu a { padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .nav-dropdown-menu a:hover { padding-left: 0; }
 }
 
 /* ── HERO ────────────────────────────────────────────── */

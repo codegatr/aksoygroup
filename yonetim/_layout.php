@@ -28,6 +28,7 @@ $menuItems = [
     ['key' => 'sirketler',   'label' => 'Şirketler',       'href' => '/yonetim/modules/sirketler.php','icon' => 'building'],
     ['key' => 'haberler',    'label' => 'Haberler',        'href' => '/yonetim/modules/haberler.php', 'icon' => 'newspaper'],
     ['key' => 'pages',       'label' => 'Sayfalar',        'href' => '/yonetim/modules/pages.php',    'icon' => 'file-text'],
+    ['key' => 'yonetim-kurulu','label' => 'Yönetim Kurulu', 'href' => '/yonetim/modules/yonetim-kurulu.php', 'icon' => 'users'],
 
     ['section' => 'İletişim'],
     ['key' => 'iletisim',    'label' => 'Mesajlar',        'href' => '/yonetim/modules/iletisim.php', 'icon' => 'mail', 'badge' => $unreadMessages ?: null],
