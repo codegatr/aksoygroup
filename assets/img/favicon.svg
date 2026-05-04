@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="8" fill="#0A0E1A"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Georgia, 'Fraunces', serif"
+        font-weight="200"
+        font-size="42"
+        fill="#C9A961"
+        letter-spacing="0">A</text>
+  <line x1="14" y1="54" x2="50" y2="54" stroke="#C9A961" stroke-width="0.8"/>
+</svg>

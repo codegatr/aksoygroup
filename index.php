@@ -1,68 +1,199 @@
 <?php
 /**
  * AKSOY GROUP — Ana Sayfa
- * Faz 3'te tam editoryal frontend ile değiştirilecek.
+ * Hero · Sektörler · Şirketler vitrin · Haberler · Zaman çizgisi · İletişim CTA
  */
-
 declare(strict_types=1);
 require_once __DIR__ . '/includes/bootstrap.php';
 
-// Sektörleri çek
+// ── VERİ ──────────────────────────────────────────
 $sektorler = DB::all("SELECT * FROM ag_sektorler WHERE is_active = 1 ORDER BY sort_order ASC");
-$rakamlar  = DB::all("SELECT * FROM ag_rakamlar WHERE is_active = 1 ORDER BY sort_order ASC");
+$featuredSektorler = array_filter($sektorler, fn($s) => (int)$s['is_featured'] === 1);
+$rakamlar = DB::all("SELECT * FROM ag_rakamlar WHERE is_active = 1 ORDER BY sort_order ASC LIMIT 4");
+$featuredCompanies = DB::all("SELECT s.*, sk.ad AS sektor_ad
+                              FROM ag_sirketler s
+                              LEFT JOIN ag_sektorler sk ON s.sektor_id = sk.id
+                              WHERE s.is_featured = 1 AND s.durum = 'aktif'
+                              ORDER BY s.sort_order ASC LIMIT 6");
+$haberler = DB::all("SELECT h.*, k.ad AS kategori_ad
+                     FROM ag_haberler h
+                     LEFT JOIN ag_haber_kategori k ON h.kategori_id = k.id
+                     WHERE h.is_active = 1 AND (h.yayim_tarihi IS NULL OR h.yayim_tarihi <= NOW())
+                     ORDER BY COALESCE(h.yayim_tarihi, h.created_at) DESC LIMIT 3");
+$zaman = DB::all("SELECT * FROM ag_zaman_cizgisi WHERE is_active = 1 ORDER BY yil ASC");
+
+$page = [
+    'title' => null, // ana sayfada title sadece site title
+    'description' => setting('site_description', ''),
+];
+
+require_once __DIR__ . '/includes/templates/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<title><?= h(setting('site_title', 'AKSOY GROUP')) ?> — <?= h(setting('site_tagline', '')) ?></title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="<?= ha(setting('site_description', '')) ?>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@200;300;400;500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Manrope',sans-serif; background:#0A0E1A; color:#F5F1E8; }
-.placeholder {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 40px 20px;
-    background-image: radial-gradient(ellipse at top, rgba(201,169,97,.08) 0%, transparent 60%);
-}
-h1 { font-family:'Fraunces',serif; font-weight:200; font-size:clamp(64px,12vw,160px); letter-spacing:.12em; color:#C9A961; }
-.tag { color:#8c8a82; margin-top:20px; letter-spacing:.2em; text-transform:uppercase; font-size:13px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1px; background:#2A2E3A; max-width:1200px; margin:60px auto 0; }
-.grid > div { background:#0A0E1A; padding:30px; }
-.grid h3 { font-family:'Fraunces',serif; font-weight:300; font-size:20px; color:#F5F1E8; margin-bottom:8px; }
-.grid h3 .num { color:#C9A961; font-size:13px; letter-spacing:.2em; display:block; margin-bottom:6px; }
-.grid p { color:#8c8a82; font-size:13px; line-height:1.6; }
-.note { margin-top:60px; padding:20px 30px; border:1px solid #2A2E3A; border-radius:6px; max-width:540px; }
-.note p { color:#8c8a82; font-size:13px; line-height:1.7; }
-.note a { color:#C9A961; text-decoration:none; border-bottom:1px solid #C9A961; }
-</style>
-</head>
-<body>
-<div class="placeholder">
-    <h1>AKSOY</h1>
-    <p class="tag"><?= h(setting('site_tagline', 'Türkiye\'nin Çok Sektörlü Vizyon Holding\'i')) ?></p>
 
-    <div class="grid">
-        <?php foreach ($sektorler as $s): ?>
-            <div>
-                <h3>
-                    <span class="num"><?= h($s['roman_no']) ?></span>
-                    <?= h($s['ad']) ?>
-                </h3>
-                <p><?= h($s['alt_baslik']) ?></p>
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+    <div class="container hero-content">
+        <div class="pretitle fade-up"><?= h(setting('site_tagline', 'Hizmetler Topluluğu')) ?></div>
+        <h1 class="fade-up delay-1">
+            On sektör.<br>
+            Tek <em>vizyon</em>.<br>
+            Sınırsız ufuk.
+        </h1>
+        <p class="lead fade-up delay-2"><?= h(setting('site_description', '')) ?></p>
+        <div class="hero-cta fade-up delay-3">
+            <a href="/sektorler" class="btn primary">Sektörlerimizi Keşfet</a>
+            <a href="/iletisim" class="btn outline">Bize Ulaşın</a>
+        </div>
+
+        <?php if ($rakamlar): ?>
+        <div class="hero-stats">
+            <?php foreach ($rakamlar as $r): ?>
+            <div class="hero-stat">
+                <div class="num"><?= h(($r['onek'] ?? '') . $r['deger'] . ($r['sufiks'] ?? '')) ?></div>
+                <div class="lbl"><?= h($r['etiket']) ?></div>
             </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
     </div>
+</section>
 
-    <div class="note">
-        <p><strong>v<?= h(setting('current_version', AG_VERSION)) ?></strong> — Genesis Launch · Bu, geçici bir karşılama sayfasıdır. Tam editoryal ön yüz Faz 3 ile gelecek.</p>
-        <p style="margin-top:12px;">Yönetim Paneli: <a href="/yonetim/">/yonetim/</a></p>
+<!-- ════════ SEKTÖRLER ════════ -->
+<section class="section" id="sektorler">
+    <div class="container">
+        <div class="section-head">
+            <span class="pretitle">Faaliyet Alanları</span>
+            <h2>Demir-çeliğin gücü, <em style="color:var(--gold)">yazılımın zekâsı</em></h2>
+            <p class="lead">Endüstriyel üretimden dijital teknolojiye, sigortadan lojistiğe — on sektörde stratejik yatırımlar.</p>
+        </div>
+
+        <div class="sectors">
+            <?php foreach ($sektorler as $s): ?>
+            <a href="/sektor/<?= ha($s['slug']) ?>" class="sector-card" style="<?= $s['vurgu_renk'] ? '--accent:' . h($s['vurgu_renk']) : '' ?>">
+                <div class="roman"><?= h($s['roman_no']) ?></div>
+                <h3><?= h($s['ad']) ?></h3>
+                <div class="alt"><?= h($s['alt_baslik'] ?? '') ?></div>
+                <div class="desc"><?= h(truncate($s['kisa_aciklama'] ?? '', 140)) ?></div>
+                <span class="arrow">İncele
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+            </a>
+            <?php endforeach; ?>
+        </div>
     </div>
-</div>
-</body>
-</html>
+</section>
+
+<!-- ════════ İŞTİRAKLER VİTRİNİ ════════ -->
+<?php if ($featuredCompanies): ?>
+<section class="section" style="background:var(--bg-2)">
+    <div class="container">
+        <div class="section-head">
+            <span class="pretitle">İştiraklerimiz</span>
+            <h2>Topluluk altında, <em style="color:var(--gold)">bağımsız markalar</em></h2>
+            <p class="lead">Her biri kendi sektöründe lider olmaya odaklanmış grup şirketlerimiz.</p>
+        </div>
+
+        <div class="companies">
+            <?php foreach ($featuredCompanies as $c): ?>
+            <a href="/sirket/<?= ha($c['slug']) ?>" class="company-card">
+                <div class="logo-wrap">
+                    <?php if (!empty($c['logo'])): ?>
+                        <img src="<?= h(uploadUrl($c['logo'])) ?>" alt="<?= ha($c['kisa_unvan']) ?>">
+                    <?php else: ?>
+                        <span class="initial"><?= h(mb_substr($c['kisa_unvan'] ?? $c['unvan'], 0, 1)) ?></span>
+                    <?php endif; ?>
+                </div>
+                <h4><?= h($c['kisa_unvan'] ?? $c['unvan']) ?></h4>
+                <?php if (!empty($c['slogan'])): ?>
+                    <div class="slogan">"<?= h($c['slogan']) ?>"</div>
+                <?php endif; ?>
+                <?php if (!empty($c['sektor_ad'])): ?>
+                    <span class="sector-tag"><?= h($c['sektor_ad']) ?></span>
+                <?php endif; ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="text-center mt-lg">
+            <a href="/sirketler" class="btn outline">Tüm Şirketler</a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- ════════ HABERLER ════════ -->
+<?php if ($haberler): ?>
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <span class="pretitle">Topluluktan Haberler</span>
+            <h2>Son <em style="color:var(--gold)">gelişmeler</em></h2>
+        </div>
+
+        <div class="news-grid">
+            <?php foreach ($haberler as $hb): ?>
+            <a href="/haber/<?= ha($hb['slug']) ?>" class="news-card">
+                <?php if (!empty($hb['kapak_gorsel'])): ?>
+                <div class="cover"><img src="<?= h(uploadUrl($hb['kapak_gorsel'])) ?>" alt="<?= ha($hb['baslik']) ?>"></div>
+                <?php else: ?>
+                <div class="cover" style="display:flex;align-items:center;justify-content:center;color:var(--gold-dark);font-family:'Fraunces',serif;font-weight:200;font-size:80px">A</div>
+                <?php endif; ?>
+                <div class="body">
+                    <div class="meta">
+                        <?= h($hb['kategori_ad'] ?? 'Kurumsal') ?>
+                        · <?= h(formatDate($hb['yayim_tarihi'] ?? $hb['created_at'])) ?>
+                    </div>
+                    <h4><?= h($hb['baslik']) ?></h4>
+                    <p class="ozet"><?= h(truncate($hb['ozet'] ?? '', 130)) ?></p>
+                    <span class="read-more">Devamı
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="text-center mt-lg">
+            <a href="/haberler" class="btn outline">Tüm Haberler</a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- ════════ ZAMAN ÇİZGİSİ ════════ -->
+<?php if ($zaman): ?>
+<section class="section" style="background:var(--bg-2)">
+    <div class="container">
+        <div class="section-head">
+            <span class="pretitle">Tarihçe</span>
+            <h2>Bir <em style="color:var(--gold)">topluluk</em> nasıl doğar?</h2>
+        </div>
+
+        <div class="timeline">
+            <?php foreach ($zaman as $t): ?>
+            <div class="timeline-item">
+                <div class="yil"><?= h((string)$t['yil']) ?></div>
+                <h4><?= h($t['baslik']) ?></h4>
+                <p><?= h($t['aciklama']) ?></p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- ════════ İLETİŞİM CTA ════════ -->
+<section class="section" style="background:linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);text-align:center">
+    <div class="container">
+        <span class="pretitle" style="color:var(--gold);font-size:11px;letter-spacing:.3em;text-transform:uppercase">Birlikte Üretelim</span>
+        <h2 class="serif" style="font-weight:200;font-size:clamp(40px,6vw,72px);line-height:1.1;margin:24px auto;max-width:720px">
+            Yatırım, ortaklık ya da işbirliği — <em style="color:var(--gold);font-style:italic">konuşalım</em>.
+        </h2>
+        <p style="color:var(--text-soft);max-width:560px;margin:0 auto 40px;font-size:17px;line-height:1.7">
+            On sektörde geleceği şekillendiren bir hizmetler topluluğunun parçası olun.
+        </p>
+        <a href="/iletisim" class="btn primary">İletişime Geç</a>
+    </div>
+</section>
+
+<?php require_once __DIR__ . '/includes/templates/footer.php'; ?>
