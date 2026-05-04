@@ -7,17 +7,16 @@ $pageDesc  = $page['description'] ?? $siteDesc;
 $fullTitle = $pageTitle ? $pageTitle . ' — ' . $siteTitle : $siteTitle;
 $ogImage   = $page['og_image'] ?? null;
 
-// Header menüsü: ag_pages tablosundaki menu_konumu = header / her_ikisi
-$headerPages = DB::all("SELECT slug, baslik FROM ag_pages
-                       WHERE is_active = 1 AND menu_konumu IN ('header','her_ikisi')
-                         AND slug NOT IN ('hakkimizda','yonetim-kurulu','surdurulebilirlik','kariyer','basin','iletisim')
-                       ORDER BY sort_order ASC");
-
-// Kurumsal alt-menü için sabit liste (her zaman aynı sırada görünsün)
+// Header menü için DB sorguları
 $kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
                           WHERE is_active = 1
                             AND slug IN ('hakkimizda','surdurulebilirlik','kariyer','basin')
                           ORDER BY FIELD(slug,'hakkimizda','surdurulebilirlik','kariyer','basin')");
+
+// Megamenu için sektörler — featured 7 tane
+$megaSektorler = DB::all("SELECT slug, ad, alt_baslik FROM ag_sektorler
+                          WHERE is_active = 1
+                          ORDER BY sort_order ASC LIMIT 8");
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -43,6 +42,10 @@ $kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
 <link rel="icon" type="image/svg+xml" href="<?= asset('assets/img/favicon.svg') ?>">
 </head>
 <body>
+
+<!-- ════════════════════════════════════════════════════
+     HEADER — Logo + Mega Menu + Search + TR/EN
+     ════════════════════════════════════════════════════ -->
 <header class="site-header" id="siteHeader">
     <div class="container">
         <a href="/" class="site-logo">
@@ -54,7 +57,9 @@ $kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
         </button>
         <nav class="site-nav" id="siteNav">
             <a href="/">Ana Sayfa</a>
-            <div class="nav-dropdown">
+
+            <!-- Kurumsal Megamenu -->
+            <div class="nav-dropdown" data-mega="kurumsal">
                 <button class="nav-dropdown-trigger" type="button">
                     Kurumsal
                     <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:5px"><polyline points="6 9 12 15 18 9"/></svg>
@@ -66,14 +71,68 @@ $kurumsalPages = DB::all("SELECT slug, baslik FROM ag_pages
                     <a href="/yonetim-kurulu">Yönetim Kurulu</a>
                 </div>
             </div>
-            <a href="/sektorler">Sektörler</a>
-            <a href="/sirketler">Şirketler</a>
+
+            <!-- Faaliyet Alanları Megamenu (Sektörler) -->
+            <div class="nav-dropdown" data-mega="faaliyet">
+                <button class="nav-dropdown-trigger" type="button">
+                    Faaliyet Alanları
+                    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:5px"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="nav-dropdown-menu" style="min-width:280px">
+                    <?php foreach (array_slice($megaSektorler, 0, 6) as $ms): ?>
+                        <a href="/sektor/<?= ha($ms['slug']) ?>"><?= h($ms['ad']) ?></a>
+                    <?php endforeach; ?>
+                    <a href="/sektorler" style="border-top:1px solid var(--line);margin-top:8px;color:var(--burgundy);font-weight:600">Tüm Sektörler →</a>
+                </div>
+            </div>
+
+            <a href="/sirketler">İştirakler</a>
             <a href="/haberler">Haberler</a>
-            <?php foreach ($headerPages as $p): ?>
-                <a href="/<?= ha($p['slug']) ?>"><?= h($p['baslik']) ?></a>
-            <?php endforeach; ?>
             <a href="/iletisim" class="cta">İletişim</a>
+
+            <!-- Search + Language toggle -->
+            <div class="header-utils">
+                <button onclick="document.getElementById('searchOverlay').classList.add('open');setTimeout(()=>document.getElementById('searchInput').focus(),100)" aria-label="Ara" title="Ara">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                <button class="lang-toggle active" title="Türkçe">TR</button>
+            </div>
         </nav>
     </div>
 </header>
+
+<!-- ════════════════════════════════════════════════════
+     ARAMA OVERLAY
+     ════════════════════════════════════════════════════ -->
+<div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="document.getElementById('searchOverlay').classList.remove('open')" aria-label="Kapat">×</button>
+    <div class="search-box">
+        <form method="get" action="/arama">
+            <input type="search" name="q" id="searchInput" placeholder="Aksoy Group içinde ara…" autocomplete="off">
+            <div style="margin-top:24px;display:flex;gap:14px;flex-wrap:wrap">
+                <a href="/sektorler" style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase">→ Sektörler</a>
+                <a href="/sirketler" style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase">→ İştirakler</a>
+                <a href="/haberler" style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase">→ Haberler</a>
+                <a href="/yonetim-kurulu" style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.15em;text-transform:uppercase">→ Yönetim Kurulu</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// ESC ile arama kapansın
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const ov = document.getElementById('searchOverlay');
+        if (ov && ov.classList.contains('open')) ov.classList.remove('open');
+    }
+});
+// Sticky header scroll efekti
+window.addEventListener('scroll', function() {
+    const h = document.getElementById('siteHeader');
+    if (window.scrollY > 30) h.classList.add('scrolled');
+    else h.classList.remove('scrolled');
+}, { passive: true });
+</script>
+
 <main>
